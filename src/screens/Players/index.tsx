@@ -6,12 +6,15 @@ import { HighLight } from '@components/HighLight';
 import { Input } from '@components/Input';
 import { ButtonIcon } from '@components/ButtonIcon';
 import { Filter } from '@components/Filter';
+import { PlayerCard } from '@components/PlayerCard';
+import { ListEmpty } from '@components/ListEmpty';
 
 import { Container, Form, HeaderList, NumberOfPlayers } from './styles';
+import { Button } from '@components/Button';
 
 export function Players() {
   const [team, setTeam] = useState('Time A');
-  const [players, setPlayers] = useState(['João', 'Maria', 'Fernando']);
+  const [players, setPlayers] = useState([]);
 
   return (
     <Container>
@@ -35,7 +38,7 @@ export function Players() {
 
       <HeaderList>
         <FlatList
-          data={['Time A', 'Time B', 'Time C']}
+          data={['Time A', 'Time B', 'Time C', 'Time D', 'Time E', 'Time F', 'Time G','Time H','Time I','Time J',]}
           keyExtractor={item => item}
           renderItem={
             ({ item }) => (
@@ -46,7 +49,7 @@ export function Players() {
               />
             )
           }
-          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
           horizontal
         />
 
@@ -54,6 +57,30 @@ export function Players() {
           {players.length}
         </NumberOfPlayers>
       </HeaderList>
+
+      <FlatList 
+        data={players}
+        keyExtractor={item => item}
+        renderItem={({ item }) => (
+          <PlayerCard 
+            name={item} 
+            onRemove={() => {}} 
+          />
+        )}
+        ListEmptyComponent={() => (
+          <ListEmpty message='Não há pessoas nesse time' />
+        )}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
+          {paddingBottom: 100},
+          players.length === 0 && {flex: 1}
+        ]}
+      />
+
+      <Button 
+        title='Remover turma'
+        type='SECONDARY'
+      />
     </Container>
   );
 }
