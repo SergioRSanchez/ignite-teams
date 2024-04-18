@@ -6,6 +6,7 @@ import theme from '@theme/index';
 
 import { Groups } from '@screens/Groups';
 import { NewGroup } from '@screens/NewGroup';
+import { Players } from '@screens/Players';
 
 import { Loading } from '@components/Loading';
 
@@ -22,7 +23,7 @@ export default function App() {
       {
         fontLoaded 
         ?
-        <NewGroup />
+        <Players />
         :
         <Loading />
       }
