@@ -29,7 +29,11 @@ export function Groups() {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  function handleOpenGroup(group: string) {
+    navigation.navigate('players', { group });
+  };
 
   useFocusEffect(useCallback(() => {
     fetchGroups();
@@ -47,7 +51,12 @@ export function Groups() {
       <FlatList 
         data={groups}
         keyExtractor={item => item}
-        renderItem={({ item: group }) => <GroupCard title={group} />}
+        renderItem={({ item: group }) => (
+          <GroupCard 
+            title={group} 
+            onPress={() => handleOpenGroup(group)}
+          />
+        )}
         contentContainerStyle={groups.length === 0 && { flex: 1 }}
         ListEmptyComponent={() => (
           <ListEmpty message='Que tal cadastrar a primeira turma?' />
