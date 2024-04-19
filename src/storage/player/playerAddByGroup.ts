@@ -10,7 +10,7 @@ export async function playerAddByGroup(newPlayer: PlayerStorageDTO, group: strin
   try {
     const storedPlayers = await playersGetByGroup(group);
 
-    const playerAlreadyExists = storedPlayers.some(player => player.name === newPlayer.name);
+    const playerAlreadyExists = storedPlayers.filter(player => player.name === newPlayer.name);
 
     if (playerAlreadyExists) {
       throw new AppError('Jogador ja existe');
