@@ -14,6 +14,10 @@ export function NewGroup() {
   const [group, setGroup] = useState('');
 
   function handleNew() {
+    if(group.trim().length === 0) {
+      return;
+    }
+    
     navigation.navigate('players', { group });
   };
 
