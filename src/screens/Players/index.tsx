@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Alert, FlatList } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { Alert, FlatList, TextInput } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 
 import { AppError } from '@utils/AppError';
 
 import { playerAddByGroup } from '@storage/player/playerAddByGroup';
-import { playersGetByGroup } from '@storage/player/playersGetByGroup';
+import { playerGetByGroupAndTeam } from '@storage/player/playerGetByGroupAndTeam';
+import { PlayerStorageDTO } from '@storage/player/PlayerStorageDTO';
 
 import { Header } from '@components/Header';
 import { HighLight } from '@components/HighLight';
@@ -26,10 +27,12 @@ export function Players() {
   const route = useRoute();
 
   const [team, setTeam] = useState('Time A');
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
   const [newPlayerName, setNewPlayerName] = useState('');
 
   const { group } = route.params as RouteParams
+
+  const newPlayerNameInputRef = useRef<TextInput>(null);
 
   async function handleAddPlayer() {
     if (newPlayerName.trim().length === 0) {
@@ -43,10 +46,10 @@ export function Players() {
 
     try {
       await playerAddByGroup(newPlayer, group);
-      setNewPlayerName('');
 
-      const players = await playersGetByGroup(group);
-      console.log(players);
+      newPlayerNameInputRef.current?.blur();
+      setNewPlayerName('');
+      fetchPlayersByTeam();
 
     } catch (error) {
       if (error instanceof AppError) {
@@ -57,6 +60,21 @@ export function Players() {
       }
     }
   };
+
+  async function fetchPlayersByTeam() {
+    try {
+      const playerByTeam = await playerGetByGroupAndTeam(group, team);
+      setPlayers(playerByTeam);
+
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Pessoas', 'Houve um erro ao carregar as pessoas');
+    }
+  };
+
+  useEffect(() => {
+    fetchPlayersByTeam();
+  }, [team]);
 
   return (
     <Container>
@@ -71,8 +89,11 @@ export function Players() {
         <Input 
           placeholder='Nome da pessoa'
           autoCorrect={false}
-          onChangeText={setNewPlayerName}
           value={newPlayerName}
+          onChangeText={setNewPlayerName}
+          inputRef={newPlayerNameInputRef}
+          onSubmitEditing={handleAddPlayer}
+          returnKeyType='done'
         />
 
         <ButtonIcon 
@@ -83,7 +104,7 @@ export function Players() {
 
       <HeaderList>
         <FlatList
-          data={['Time A', 'Time B', 'Time C', 'Time D', 'Time E', 'Time F', 'Time G','Time H','Time I','Time J',]}
+          data={['Time A', 'Time B']}
           keyExtractor={item => item}
           renderItem={
             ({ item }) => (
@@ -105,10 +126,10 @@ export function Players() {
 
       <FlatList 
         data={players}
-        keyExtractor={item => item}
+        keyExtractor={item => item.name}
         renderItem={({ item }) => (
           <PlayerCard 
-            name={item} 
+            name={item.name} 
             onRemove={() => {}} 
           />
         )}
