@@ -10,7 +10,7 @@ export async function groupCreate(newGroupName: string) {
 
     const storedGroups = await groupsGetAll();
 
-    const groupAlreadyExists = storedGroups.includes(newGroupName);
+    const groupAlreadyExists = storedGroups.some(group => group.toLowerCase() === newGroupName.toLowerCase());
 
     if (groupAlreadyExists) {
       throw new AppError('Turma ja existe.');
