@@ -73,11 +73,11 @@ export function Players() {
       const playerByTeam = await playerGetByGroupAndTeam(group, team);
       setPlayers(playerByTeam);
 
-      setIsLoading(false);
-
     } catch (error) {
       console.log(error);
       Alert.alert('Pessoas', 'Houve um erro ao carregar as pessoas');
+    } finally {
+      setIsLoading(false);
     }
   };
 
